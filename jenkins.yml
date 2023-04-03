@@ -5,32 +5,32 @@
   remote_user: node1
   tasks:
     - name: install git
-      yum:
+      apt:
         name: git
         state: latest
 
-    - name: download the jenkins release
-      get_url:
-        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
-        dest: /etc/yum.repos.d/jenkins.repo
-
-    - name: Import jenkins key from url
-      rpm_key:
+    - name: ensure the jenkins apt repository key is installed
+      apt_key:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
         state: present
-        key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+    - name: ensure the repository is configured
+      apt_repository:
+        repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+        state: present
 
     - name: Install java jdk
-      yum:
-        name: java-11-openjdk-devel
+      apt:
+        name: default-jdk
         state: present
 
-    - name: Install jenkins in RHEL8
-      yum:
+    - name: Install jenkins in ubuntu 20.04
+      apt:
         name: jenkins
         state: present
 
     - name: start the jenkins server
       service:
-        name: "jenkins"
+        name: jenkins
         state: started
         enabled: yes
