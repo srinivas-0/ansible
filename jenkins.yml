@@ -36,8 +36,21 @@
         state: started
         enabled: yes
 
-    - name: enable ports for jenkins server
-      ufw:
-        rule: allow
-        port: 8080
-        proto: tcp
+    - name: Install firewalld
+      apt:
+        name: firewalld
+        state: present
+
+    - name: start firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: enable port 8080 for jenkins
+      firewalld:
+        zone: public
+        port: 8080/tcp
+        permanent: true
+        state: enabled
+
