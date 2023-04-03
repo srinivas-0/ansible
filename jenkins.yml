@@ -20,7 +20,7 @@
 
     - name: Install java jdk
       apt:
-        name: default-jdk
+        name: openjdk-11-jdk
         state: present
 
     - name: Install jenkins in ubuntu 20.04
@@ -38,10 +38,4 @@
       ufw:
         rule: allow
         port: 8080
-        proto: tcp
-
-    - name: enable ports for HTTP
-      ufw:
-        rule: allow
-        port: 80
         proto: tcp
