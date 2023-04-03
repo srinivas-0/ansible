@@ -10,12 +10,14 @@
 
     - name: ensure the jenkins apt repository key is installed
       apt_key:
-        url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+        url: https://pkg.jenkins.io/debian/jenkins.io-2023.key
         state: present
 
     - name: ensure the repository is configured
       apt_repository:
-        repo: 'deb https://pkg.jenkins.io/debian binary/'
+        repo: 'deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+               https://pkg.jenkins.io/debian binary/'
+        dest: /etc/apt/sources.list.d/jenkins.list
         state: present
 
     - name: Install java jdk
