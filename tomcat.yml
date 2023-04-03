@@ -1,84 +1,45 @@
 ---
-- hosts: tomcat
+- hosts: node2
   become: yes
   become_user: root
-  remote_user: node2
   tasks:
     - name: install git
-      yum:
+      apt:
         name: git
         state: latest
 
     - name: Install java jdk
-      yum:
-        name: java-11-openjdk-devel
+      apt:
+        name: openjdk-11-jdk
         state: present
 
-    - name: create the group
-      group:
-        name: tomcat
-        state: present
-
-    - name: create the user
+    - name: create a tomcat user
       user:
         name: tomcat
-        state: present
 
-    - name: create a tomcat directory under /opt
+    - name: create a tomcat group
+      group:
+        name: tomcat
+
+    - name: create a tomcat directory
       file:
-        path: /opt/tomcat8
-        state: directory
-        mode: 0755
+        path: /home/node2/tomcat
         owner: tomcat
         group: tomcat
+        mode: 0755
+        recurse: yes
 
-    - name: Download and unarchive the tomcat
+    - name: Download the tomcat
       unarchive:
-        src: https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.87/bin/apache-tomcat-8.5.87.tar.gz
-        dest: /opt/tomcat8
+        src: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.73/bin/apache-tomcat-9.0.73.tar.gz
+        dest: /home/node2/tomcat
         remote_src: yes
 
     - name: change ownership of tomcat directory
       file:
-        path: /opt/tomcat8
+        path: /home/node2/tomcat/apache-tomcat-9.0.73
         owner: tomcat
         group: tomcat
         mode: 0755
         recurse: yes
         state: directory
-
-    - name: move files to the /opt/tomcat8 directory
-      become: yes
-      become_user: tomcat
-      shell: "mv /opt/tomcat8/apache*/* /opt/tomcat8"
-
-    - name: creating a service file
-      copy: 
-        content: |-
-          [Unit]
-          Description=Tomcat Service
-          Requires=network.target
-          After=network.target
-          [Service]
-          Type=forking
-          User=tomcat
-          Environment="CATALINA_PID=/opt/tomcat8/logs/tomcat.pid"
-          Environment="CATALINA_BASE=/opt/tomcat8"
-          Environment="CATALINA_HOME=/opt/tomcat8"
-          Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
-          ExecStart=/opt/tomcat8/bin/startup.sh
-          ExecStop=/opt/tomcat8/bin/shutdown.sh
-          Restart=on-abnormal
-          [Install]
-          WantedBy=multi-user.target
-        dest: /etc/systemd/system/tomcat.service
-
-    - name: Re-load the systemd to re-load configurations
-      systemd:
-        daemon_reload: yes
-
-    - name: start and enable the tomcat
-      systemd:
-        name: tomcat
-        enabled: yes
-        state: started
