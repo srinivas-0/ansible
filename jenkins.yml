@@ -1,8 +1,7 @@
 ---
-- hosts: jenkins
+- hosts: all
   become: yes
   become_user: root
-  remote_user: node1
   tasks:
     - name: install git
       apt:
