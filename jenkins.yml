@@ -38,4 +38,10 @@
       ufw:
         rule: allow
         port: 8080
-        proto: tcp     
+        proto: tcp
+
+    - name: enable ports for HTTP
+      ufw:
+        rule: allow
+        port: 80
+        proto: tcp
