@@ -48,10 +48,11 @@
       copy: 
         src: tomcat.service
         dest: /etc/systemd/system
+        mode: 0755
 
     - name: start and enable tomcat service
       systemd:
         name: tomcat
-        state: started
-        enabled: yes
-      become: true
+        state: restarted
+        enabled: true
+        daemon_reload: true
