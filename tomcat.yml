@@ -50,6 +50,21 @@
         dest: /etc/systemd/system
         mode: 0755
 
+    - name: copy the user's file to conf directory
+      copy:
+        src: tomcat-users.xml
+        dest: /home/node2/tomcat/apache-tomcat-9.0.73/conf
+
+    - name: copy the context file to META-INF directory
+      copy:
+        src: context.xml
+        dest: /home/node2/tomcat/apache-tomcat-9.0.73/webapps/manager/META-INF/
+
+    - name: copy the context file to host-manager META-INF directory
+      copy:
+        src: host-manager/context.xml
+        dest: /home/node2/tomcat/apache-tomcat-9.0.73/webapps/host-manager/META-INF/
+
     - name: start and enable tomcat service
       systemd:
         name: tomcat
